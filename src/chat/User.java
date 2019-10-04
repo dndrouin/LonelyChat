@@ -25,8 +25,6 @@ public class User {
         location = "Unknown";
     }
 
-//TODO: prevent blank messages
-
 
 
 

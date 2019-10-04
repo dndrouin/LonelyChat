@@ -5,6 +5,7 @@
 package chat;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +19,7 @@ public class Main {
 
     public static void main(String[] args) {
         //first opens login window to receive username from user
-        String username = loginWindow();
+         String username = loginWindow();
         //create new user object with username received
         User human = new User(username);
         //then opens main chat window with their username
@@ -28,81 +29,76 @@ public class Main {
 
     //opens main chat window
     public static void mainWindow(User user1) {
+        //assorted variables - explained when used in code
+        Dimension full = new Dimension(500,700);
         boolean looping=true;
         AtomicBoolean newMsg = new AtomicBoolean(false);
-        JFrame wFrame;
-        JMenuBar wMenuBar;
-        JPanel wPanel;
-        JPanel insidePanel;
-        JPanel txtPanel;
-        JPanel messagesPanel;
-        JMenu wMenu;
-        JMenu oMenu;
-        JMenuItem item1, item2;
-        JButton butt;
-        JTextArea entry;
         final String[] temp = new String[1];
 
+        //panels
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
 
-        //opens the main chat client window after user entered username on login window
-        wFrame = new JFrame("LonelyChat - " + user1.username);
-        wFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        wMenuBar = new JMenuBar();
-        wPanel = new JPanel();
-        txtPanel = new JPanel();
-        insidePanel = new JPanel();
-        entry = new JTextArea();
-        messagesPanel = new JPanel();
+        //menu things
+        JMenuBar mb1 = new JMenuBar();
+        JMenu m1 = new JMenu("Menu");
+        JMenu m2 = new JMenu("Program");
+        JMenuItem i1 = new JMenuItem("Options");
+        JMenuItem i2 = new JMenuItem("Credits");
+        JMenuItem i3 = new JMenuItem("Settings");
 
-        wPanel.setLayout(new BorderLayout());
-        insidePanel.setLayout(new BorderLayout());
-        txtPanel.setLayout(new BorderLayout());
-
-        wMenu = new JMenu("Menu");
-        oMenu = new JMenu("Program");
-        item1 = new JMenuItem("Settings");
-        item2 = new JMenuItem("Credits");
-        butt = new JButton("Send");
+        //main window
+        JFrame mainFrame = new JFrame("LonelyChat - " + user1.username);
+        mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        mainFrame.setPreferredSize(full);
+        mainFrame.setResizable(false);
+        mainFrame.pack();
 
         //creating the menubar and adding it to the window
-        oMenu.add(item1);
-        oMenu.add(item2);
-        wMenuBar.add(wMenu);
-        wMenuBar.add(oMenu);
-        wFrame.setJMenuBar(wMenuBar);
+        m2.add(i1);
+        m2.add(i2);
+        m1.add(i3);
+        mb1.add(m1);
+        mb1.add(m2);
+        mainFrame.setJMenuBar(mb1);
 
-        //adding panels and other components together and onto the window
-        insidePanel.add(butt, BorderLayout.SOUTH);
-        wPanel.add(insidePanel, BorderLayout.LINE_END);
-        wFrame.add(wPanel);
-        txtPanel.add(entry, BorderLayout.SOUTH);
-        wPanel.add(txtPanel, BorderLayout.WEST);
-
-        //adjusting sizing
-        butt.setPreferredSize(new Dimension(100, 50));
-        entry.setPreferredSize(new Dimension(285, 50));
-        wFrame.setPreferredSize(new Dimension(400, 600));
-        messagesPanel.setPreferredSize(new Dimension(285,500));
-        wFrame.pack();
-        wFrame.setResizable(false);
-
-        //make entry deal with overflow correctly
+        //other various components
+        JButton b1 = new JButton("Send");
+        JTextArea entry = new JTextArea();
         entry.setLineWrap(true);
         entry.setWrapStyleWord(true);
 
+        //resizing components
+        p1.setPreferredSize(full);
+        p2.setMaximumSize(new Dimension(500,150));
+        p3.setMaximumSize(new Dimension(500,540));
+        b1.setPreferredSize(new Dimension(100,100));
+        mainFrame.add(p1);
+        entry.setPreferredSize(new Dimension(340,100));
+        p1.setLayout(new BoxLayout(p1,BoxLayout.Y_AXIS));
 
-        //seeing what things are by what color they turn, remember to delete this
-        /*
-        wFrame.setBackground(Color.CYAN);
-        insidePanel.setBackground(Color.MAGENTA);
-        txtPanel.setBackground(Color.ORANGE);
-        messagesPanel.setBackground(Color.RED);
-*/
-        txtPanel.add(messagesPanel, BorderLayout.CENTER);
+        //setting margins for bottom box
+        p2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        //putting everything together with a scrollbar
+        JScrollPane p3Scroll = new JScrollPane(p3);
+        p1.add(p3Scroll, BorderLayout.WEST);
+        p3Scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        p1.add(p2);
+        p2.setLayout(new BorderLayout());
+        p2.add(b1, BorderLayout.EAST);
+        p2.add(entry, BorderLayout.WEST);
+        JScrollPane scrollText = new JScrollPane(entry);
+        p2.add(scrollText, BorderLayout.WEST);
+        scrollText.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        //sends a message
-        butt.addActionListener(new ActionListener() {
+        //make window visible to user
+        mainFrame.setVisible(true);
+
+        //when b1 is clicked, sends a message
+        b1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 temp[0] = entry.getText();
@@ -111,36 +107,34 @@ public class Main {
         });
 
         //make them the same so when temp changes tempPrev can compare and conclude it has changed, thus flipping value of newMsg
+        //if the user wants to send themselves the same message twice then i guess that's just too bad
         temp[0] = "null";
         String tempPrev = "null";
-
-        //make messages panel display all messages vertically
-        messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
-
-        //show window
-        wFrame.setVisible(true);
 
         //basically equivalent to refreshing for new messages
         while(looping){
             if(!tempPrev.equals(temp[0])){
+                System.out.println("New message received!");
                 tempPrev = temp[0];
                 newMsg.set(true);
             }
             if(newMsg.get()){
+            //wipe the textarea after a message is sent
+                entry.setText("");
+                //add message's panel to the panel where messages should display
+                p3.add(received.panel,BorderLayout.SOUTH);
 
-                System.out.println("New message received!");
-                messagesPanel.add(received.panel);
                 try {
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
-                    //do nothing
+                    //do nothing, because it's working as intended
                 }
 
             }
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
-                //do nothing
+                //do nothing, because it's working as intended
             }
             //reset newMsg
             newMsg.set(false);
