@@ -1,9 +1,13 @@
+//
+// (c) danielle drouin 2019 - github.com/dndrouin
+//
+
 package chat;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Message extends JPanel {
+public class Message{
 
     User sender;
     JPanel panel;
@@ -18,29 +22,27 @@ public class Message extends JPanel {
         sender = user;
         //string message is added to the jpanel
         panel = new JPanel();
-    }
+}
 
     //TODO: prevent blank messages
 
     public static Message sendMessage(User sendr, String message){
 
         Message sending = new Message(sendr);
-
-        JPanel msgPanel = new JPanel();
-        JPanel iconPanel = new JPanel();
         JLabel messageJ = new JLabel(message);
 
         //put together entire user message panel
-        msgPanel.setLayout(new BorderLayout());
-        msgPanel.add(iconPanel,BorderLayout.WEST);
-        msgPanel.add(messageJ,BorderLayout.CENTER);
-        iconPanel.setPreferredSize(new Dimension(75,100));
-        msgPanel.setPreferredSize(new Dimension(250,100));
-        msgPanel.setBackground(Color.decode("#7df59d"));
-        iconPanel.setBackground(Color.decode("#75967e"));
+        sending.panel.setLayout(new BorderLayout());
+        sending.panel.add(messageJ,BorderLayout.CENTER);
+        sending.panel.setPreferredSize(new Dimension(500,200));
 
+        //sending.panel is marked as invalid for some reason and therefore not showing up
+        //System.out.println("Panel Validity: " + sending.panel.isValid());
+
+        //testing to see if i can see the panel
+        sending.panel.setBackground(Color.decode("#00aaff"));
+        //confirmation that the method finished
         System.out.println("Message sent!");
-        sending.panel = msgPanel;
         return sending;
     }
 

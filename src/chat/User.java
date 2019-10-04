@@ -4,8 +4,7 @@
 
 package chat;
 
-import javax.swing.*;
-import java.awt.*;
+
 
 public class User {
     public String username, realName, icon, location;

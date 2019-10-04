@@ -5,7 +5,6 @@
 package chat;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
 
-    static Message received;
+    public static Message received;
 
     public static void main(String[] args) {
         //first opens login window to receive username from user
@@ -39,7 +38,6 @@ public class Main {
         JPanel p1 = new JPanel();
         JPanel p2 = new JPanel();
         JPanel p3 = new JPanel();
-        JPanel p4 = new JPanel();
 
         //menu things
         JMenuBar mb1 = new JMenuBar();
@@ -93,6 +91,7 @@ public class Main {
         JScrollPane scrollText = new JScrollPane(entry);
         p2.add(scrollText, BorderLayout.WEST);
         scrollText.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        p3.setLayout(new BoxLayout(p3,BoxLayout.Y_AXIS));
 
         //make window visible to user
         mainFrame.setVisible(true);
@@ -122,7 +121,8 @@ public class Main {
             //wipe the textarea after a message is sent
                 entry.setText("");
                 //add message's panel to the panel where messages should display
-                p3.add(received.panel,BorderLayout.SOUTH);
+                p3.add(received.panel);
+                //FIXME: this panel is marked invalid and never appears
 
                 try {
                     TimeUnit.SECONDS.sleep(1);
@@ -210,6 +210,19 @@ public class Main {
         programName.setHorizontalAlignment(JLabel.CENTER);
         programName.setVerticalAlignment(JLabel.CENTER);
         programName.setFont(new Font("Arial", Font.BOLD, 24));
+
+        //set look and feel to make windows look better
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            //do nothing
+        } catch (InstantiationException e) {
+            //do nothing
+        } catch (IllegalAccessException e) {
+            //do nothing
+        } catch (UnsupportedLookAndFeelException e) {
+            //do nothing
+        }
 
         //it's showtime, baby!
         window.setVisible(true);
