@@ -17,11 +17,13 @@ public class customizedPanel extends JPanel {
         else{
             customizedPanel.super.setBackground(Color.DARK_GRAY);
         }
+//TODO: limit width of jlabel
+        JLabel txt = new JLabel(text);
 
         customizedPanel.super.setPreferredSize(size);
         customizedPanel.super.setMaximumSize(max);
         customizedPanel.super.setLayout(layout);
-        customizedPanel.super.add(new JLabel(text));
+        customizedPanel.super.add(txt);
     }
 
 }

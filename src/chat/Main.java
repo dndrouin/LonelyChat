@@ -32,7 +32,7 @@ public class Main {
     public static void mainWindow(User user1) {
         //assorted variables - explained when used in code
         Dimension full = new Dimension(500,700);
-        boolean looping=true;
+        boolean refresh =true;
         AtomicBoolean newMsg = new AtomicBoolean(false);
         int prevID = 0; //track previous message's ID to know if a new message was sent
 
@@ -83,6 +83,8 @@ public class Main {
 
         //putting everything together with a scrollbar
         JScrollPane p3Scroll = new JScrollPane(p3);
+        JScrollBar p3ScrollBar = p3Scroll.getVerticalScrollBar();
+        p3Scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         p3.setPreferredSize(new Dimension(500,1000));
         p1.add(p3Scroll, BorderLayout.WEST);
         p3Scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -113,8 +115,8 @@ public class Main {
         });
 
 
-        //basically equivalent to refreshing for new messages
-        while(looping){
+        //keeps looking for new messages
+        while(refresh){
             if(prevID != Message.id){
                 prevID = Message.id;
                 newMsg.set(true);
@@ -122,20 +124,21 @@ public class Main {
             if(newMsg.get()){
             //wipe the textarea after a message is sent
                 entry.setText("");
-                //add message's panel to the panel where messages should display
                 System.out.println("New message detected!");
-                //msgPanel.add(receivedMsg, BorderLayout.CENTER);
+//FIXME: message panels get smaller with the more you send, and p3 doesn't scroll
+                //create a customizedPanel with message text and add it to the message display area
                 p3.add((new customizedPanel(size, max, layout, received.text)),0);
+                p3.setPreferredSize(new Dimension(500, size.height*Message.id));
+                p3.setMaximumSize(new Dimension(500, max.height*Message.id));
                 p3.validate();
+                p3ScrollBar.setValue(p3ScrollBar.getMaximum());
                 System.out.println("Message should now be visible.");
+
+                //reset newMsg
+                newMsg.set(false);
             }
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                //do nothing, because it's working as intended
-            }
-            //reset newMsg
-            newMsg.set(false);
+
+
         }
 
     }
