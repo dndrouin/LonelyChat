@@ -17,6 +17,8 @@ public class Main {
     public static Message received;
 
     public static void main(String[] args) {
+        //start message ID at zero when program starts
+        Message.id = 0;
         //first opens login window to receive username from user
          String username = loginWindow();
         //create new user object with username received
@@ -32,7 +34,7 @@ public class Main {
         Dimension full = new Dimension(500,700);
         boolean looping=true;
         AtomicBoolean newMsg = new AtomicBoolean(false);
-        final String[] temp = new String[1];
+        int prevID = 0; //track previous message's ID to know if a new message was sent
 
         //panels
         JPanel p1 = new JPanel();
@@ -71,7 +73,6 @@ public class Main {
         //resizing components
         p1.setPreferredSize(full);
         p2.setMaximumSize(new Dimension(500,150));
-        p3.setMaximumSize(new Dimension(500,540));
         b1.setPreferredSize(new Dimension(100,100));
         mainFrame.add(p1);
         entry.setPreferredSize(new Dimension(340,100));
@@ -82,6 +83,7 @@ public class Main {
 
         //putting everything together with a scrollbar
         JScrollPane p3Scroll = new JScrollPane(p3);
+        p3.setPreferredSize(new Dimension(500,1000));
         p1.add(p3Scroll, BorderLayout.WEST);
         p3Scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         p1.add(p2);
@@ -96,40 +98,36 @@ public class Main {
         //make window visible to user
         mainFrame.setVisible(true);
 
+        //variables to create customizedPanel for received messages
+        Dimension size = new Dimension(500,50);
+        Dimension max = new Dimension(500, 100);
+        BorderLayout layout = new BorderLayout();
+
+
         //when b1 is clicked, sends a message
         b1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                temp[0] = entry.getText();
-                received = Message.sendMessage(user1, temp[0]);
+                received = Message.sendMessage(user1, entry.getText());
             }
         });
 
-        //make them the same so when temp changes tempPrev can compare and conclude it has changed, thus flipping value of newMsg
-        //if the user wants to send themselves the same message twice then i guess that's just too bad
-        temp[0] = "null";
-        String tempPrev = "null";
 
         //basically equivalent to refreshing for new messages
         while(looping){
-            if(!tempPrev.equals(temp[0])){
-                System.out.println("New message received!");
-                tempPrev = temp[0];
+            if(prevID != Message.id){
+                prevID = Message.id;
                 newMsg.set(true);
             }
             if(newMsg.get()){
             //wipe the textarea after a message is sent
                 entry.setText("");
                 //add message's panel to the panel where messages should display
-                p3.add(received.panel);
-                //FIXME: this panel is marked invalid and never appears
-
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    //do nothing, because it's working as intended
-                }
-
+                System.out.println("New message detected!");
+                //msgPanel.add(receivedMsg, BorderLayout.CENTER);
+                p3.add((new customizedPanel(size, max, layout, received.text)),0);
+                p3.validate();
+                System.out.println("Message should now be visible.");
             }
             try {
                 TimeUnit.SECONDS.sleep(1);
