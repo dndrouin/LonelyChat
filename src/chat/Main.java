@@ -14,6 +14,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
 
+    static Font Arial = new Font("Arial", Font.PLAIN, 11);
+    static Font ArialBold = new Font("Arial", Font.BOLD, 11);
+
     public static Message received;
 
     public static void main(String[] args) {
@@ -48,7 +51,7 @@ public class Main {
         JMenu m1 = new JMenu("User");
         JMenu m2 = new JMenu("Program");
         JMenuItem i1 = new JMenuItem("Options");
-        JMenuItem i2 = new JMenuItem("Credits");
+        JMenuItem i2 = new JMenuItem("About");
         JMenuItem i3 = new JMenuItem("Settings");
         JMenuItem i4 = new JMenuItem("Log Out");
         JMenuItem i5 = new JMenuItem("Exit Program");
@@ -73,7 +76,7 @@ public class Main {
 
         //other various components
         JButton b1 = new JButton("Send");
-        JTextArea entry = new JTextArea();
+        JTextArea entry = new JTextArea(" ");
         entry.setLineWrap(true);
         entry.setWrapStyleWord(true);
 
@@ -107,26 +110,62 @@ public class Main {
         mainFrame.setVisible(true);
 
         //variables to create customizedPanel for received messages
-        Dimension size = new Dimension(500,50);
-        Dimension max = new Dimension(500, 100);
+        Dimension size = new Dimension(500,60);
         BorderLayout layout = new BorderLayout();
 
         //placeholder setup
         placeholder.setPreferredSize(p3.getSize());
-        placeholder.setBackground(Color.YELLOW);
+        placeholder.setBackground(Color.WHITE);
         p3.add(placeholder);
 
-        //when b1 is clicked, sends a message
+        //letter counter to be displayed under jtextarea entry
+        int count = 0;
+        JLabel countDisplay = new JLabel(count + "/150");
+        p2.add(countDisplay, BorderLayout.SOUTH);
+
+        //setting fonts
+        entry.setFont(Arial);
+        b1.setFont(Arial);
+        m1.setFont(Arial);
+        m2.setFont(Arial);
+        i1.setFont(Arial);
+        i2.setFont(Arial);
+        i3.setFont(Arial);
+        i4.setFont(Arial);
+        i5.setFont(Arial);
+
+
+        //when b1 is clicked, sends a message if number of characters doesnt go over the limit (150). if it does, turns
+        //the text area red for a second to warn the user.
+        //FIXME: whatever the hell is going on here
         b1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                received = Message.sendMessage(user1, entry.getText());
+                    received = Message.sendMessage(user1, entry.getText());
             }
         });
 
+        //TODO: figure out what to do with old messages
+
         //keeps looking for new messages
         while(refresh){
-            //if previous message id isnt the same as the current message id, a new message must have been sent
+            //continuously update the letter count for entry
+            count = (entry.getText()).length();
+            countDisplay.setText(count + "/150");
+            //if user enters over 150 characters, disable the button so they can't send the message and turn letter count red as warning
+            //if user enters nothing, disable the button as well. no blank messages allowed!
+            if(count > 150 || count == 0){
+                if(count > 150) {
+                    //only make countdisplay red if too many characters
+                    countDisplay.setForeground(Color.RED);
+                }
+                b1.setEnabled(false);
+            }
+            else{
+                countDisplay.setForeground(null);
+                b1.setEnabled(true);
+            }
+            //if previous message id isn't the same as the current message id, a new message must have been sent
             if(prevID != Message.id){
                 prevID = Message.id;
                 newMsg.set(true);
@@ -135,9 +174,8 @@ public class Main {
             //wipe the textarea after a message is sent
                 entry.setText("");
                 System.out.println("New message detected!");
-//FIXME: message panels get smaller with the more you send, and p3 doesn't scroll
                 //create a customizedPanel with message text and add it to the message display area
-                p3.add((new customizedPanel(size, max, layout, received.text)));
+                p3.add(new customizedPanel(size, layout, received.text, received.sender.username));
                 //recalculate subtract, which subtracts p3's placeholder's size by the height of the latest message to make room for new message
                 subtract = p3.getComponent(p3.getComponentCount()-1).getSize().height;
                 placeholder.setPreferredSize(new Dimension(p3.getWidth(),p3.getSize().height - subtract));
@@ -179,9 +217,12 @@ public class Main {
         JPanel bottomBottom = new JPanel();
         JLabel usernameLabel = new JLabel("Username: ");
         JLabel programName = new JLabel("LonelyChat");
+        usernameLabel.setFont(Arial);
+
 
         //login button and username field
         JButton go = new JButton("Log In");
+        go.setFont(Arial);
         window.getRootPane().setDefaultButton(go);
 
         JTextField username = new JTextField();
@@ -225,6 +266,8 @@ public class Main {
         programName.setVerticalAlignment(JLabel.CENTER);
         programName.setFont(new Font("Arial", Font.BOLD, 24));
 
+        username.setFont(Arial);
+
         //set look and feel to make windows look better
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -262,17 +305,17 @@ public class Main {
                 }
                 //spaceDetected warns user by for 1 second changing the text field background to red
                 if(spaceDetected){
-                    username.setBackground(Color.decode("#f55151"));
-                    //make string empty so next time when it goes around the while loop it waits for new input
-                    usernameStr[0] = "";
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                        //do nothing because it's working as intended
-                    }
-                    username.setBackground(null);
-                    //reset spaceDetected
-                    spaceDetected = false;
+                        username.setBackground(Color.decode("#f55151"));
+                        //make string empty so next time when it goes around the while loop it waits for new input
+                        usernameStr[0] = "";
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            //do nothing because it's working as intended
+                        }
+                        username.setBackground(null);
+                        //reset spaceDetected
+                        spaceDetected = false;
                 }
                 else{
                     //valid entry received, can move on

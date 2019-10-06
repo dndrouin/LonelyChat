@@ -4,9 +4,6 @@
 
 package chat;
 
-import javax.swing.*;
-import java.awt.*;
-
 public class Message{
 
     User sender;
@@ -33,7 +30,5 @@ public class Message{
         System.out.println("Message id " + id + " sent!");
         return sending;
     }
-
-    //TODO: maybe create a refresh method?
 
 }
