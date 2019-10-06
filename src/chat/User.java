@@ -24,8 +24,4 @@ public class User {
         location = "Unknown";
     }
 
-
-
-
-
 }

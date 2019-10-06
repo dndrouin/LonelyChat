@@ -16,13 +16,11 @@ public class Message{
     Message(){
         sender = new User();
         text = "";
-
     }
 
     Message(User user, String msg){
         sender = user;
         text = msg;
-
 }
 
     //TODO: prevent blank messages

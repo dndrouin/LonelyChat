@@ -22,6 +22,7 @@ public class customizedPanel extends JPanel {
 
         customizedPanel.super.setPreferredSize(size);
         customizedPanel.super.setMaximumSize(max);
+        customizedPanel.super.setMinimumSize(size);
         customizedPanel.super.setLayout(layout);
         customizedPanel.super.add(txt);
     }

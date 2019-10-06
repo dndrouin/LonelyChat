@@ -32,22 +32,26 @@ public class Main {
     public static void mainWindow(User user1) {
         //assorted variables - explained when used in code
         Dimension full = new Dimension(500,700);
-        boolean refresh =true;
+        boolean refresh = true;
         AtomicBoolean newMsg = new AtomicBoolean(false);
         int prevID = 0; //track previous message's ID to know if a new message was sent
+        int subtract = 0;
 
         //panels
         JPanel p1 = new JPanel();
         JPanel p2 = new JPanel();
         JPanel p3 = new JPanel();
+        JPanel placeholder = new JPanel();
 
         //menu things
         JMenuBar mb1 = new JMenuBar();
-        JMenu m1 = new JMenu("Menu");
+        JMenu m1 = new JMenu("User");
         JMenu m2 = new JMenu("Program");
         JMenuItem i1 = new JMenuItem("Options");
         JMenuItem i2 = new JMenuItem("Credits");
         JMenuItem i3 = new JMenuItem("Settings");
+        JMenuItem i4 = new JMenuItem("Log Out");
+        JMenuItem i5 = new JMenuItem("Exit Program");
 
         //main window
         JFrame mainFrame = new JFrame("LonelyChat - " + user1.username);
@@ -56,10 +60,13 @@ public class Main {
         mainFrame.setResizable(false);
         mainFrame.pack();
 
+
         //creating the menubar and adding it to the window
         m2.add(i1);
         m2.add(i2);
         m1.add(i3);
+        m1.add(i4);
+        m1.add(i5);
         mb1.add(m1);
         mb1.add(m2);
         mainFrame.setJMenuBar(mb1);
@@ -81,7 +88,7 @@ public class Main {
         //setting margins for bottom box
         p2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        //putting everything together with a scrollbar
+        //putting components together with a scrollbar
         JScrollPane p3Scroll = new JScrollPane(p3);
         JScrollBar p3ScrollBar = p3Scroll.getVerticalScrollBar();
         p3Scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -96,7 +103,6 @@ public class Main {
         p2.add(scrollText, BorderLayout.WEST);
         scrollText.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         p3.setLayout(new BoxLayout(p3,BoxLayout.Y_AXIS));
-
         //make window visible to user
         mainFrame.setVisible(true);
 
@@ -105,6 +111,10 @@ public class Main {
         Dimension max = new Dimension(500, 100);
         BorderLayout layout = new BorderLayout();
 
+        //placeholder setup
+        placeholder.setPreferredSize(p3.getSize());
+        placeholder.setBackground(Color.YELLOW);
+        p3.add(placeholder);
 
         //when b1 is clicked, sends a message
         b1.addActionListener(new ActionListener() {
@@ -114,9 +124,9 @@ public class Main {
             }
         });
 
-
         //keeps looking for new messages
         while(refresh){
+            //if previous message id isnt the same as the current message id, a new message must have been sent
             if(prevID != Message.id){
                 prevID = Message.id;
                 newMsg.set(true);
@@ -127,9 +137,11 @@ public class Main {
                 System.out.println("New message detected!");
 //FIXME: message panels get smaller with the more you send, and p3 doesn't scroll
                 //create a customizedPanel with message text and add it to the message display area
-                p3.add((new customizedPanel(size, max, layout, received.text)),0);
-                p3.setPreferredSize(new Dimension(500, size.height*Message.id));
-                p3.setMaximumSize(new Dimension(500, max.height*Message.id));
+                p3.add((new customizedPanel(size, max, layout, received.text)));
+                //recalculate subtract, which subtracts p3's placeholder's size by the height of the latest message to make room for new message
+                subtract = p3.getComponent(p3.getComponentCount()-1).getSize().height;
+                placeholder.setPreferredSize(new Dimension(p3.getWidth(),p3.getSize().height - subtract));
+
                 p3.validate();
                 p3ScrollBar.setValue(p3ScrollBar.getMaximum());
                 System.out.println("Message should now be visible.");
@@ -170,6 +182,7 @@ public class Main {
 
         //login button and username field
         JButton go = new JButton("Log In");
+        window.getRootPane().setDefaultButton(go);
 
         JTextField username = new JTextField();
         //final string array to hold text field's text when button is pressed
