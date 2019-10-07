@@ -4,10 +4,25 @@
 
 package chat;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javafx.scene.image.*;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import javax.swing.SpringLayout;
 import java.util.concurrent.TimeUnit;
 import java.lang.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -76,7 +91,7 @@ public class Main {
 
         //other various components
         JButton b1 = new JButton("Send");
-        JTextArea entry = new JTextArea(" ");
+        JTextArea entry = new JTextArea("");
         entry.setLineWrap(true);
         entry.setWrapStyleWord(true);
 
@@ -119,9 +134,67 @@ public class Main {
         p3.add(placeholder);
 
         //letter counter to be displayed under jtextarea entry
-        int count = 0;
+        int count = -1;
         JLabel countDisplay = new JLabel(count + "/150");
         p2.add(countDisplay, BorderLayout.SOUTH);
+
+
+        //options window
+        SpringLayout springLayout = new SpringLayout();
+     //FIXME: iconImg gives immediate error
+        //creating circle icon to be displayed
+        Circle icon = new Circle(100,100,100);
+        BufferedImage iconImgB = null;
+        javafx.scene.image.Image iconImg;
+
+        try {
+            iconImgB = ImageIO.read(new File("chat/icons/default.jpg"));
+
+        } catch (IOException e) {
+            System.out.println("Could not load default icon image!");
+        }
+
+        iconImg = SwingFXUtils.toFXImage(iconImgB, null);
+
+        //filling circle with icon image
+        icon.setFill(new ImagePattern(iconImg));
+
+        JPopupMenu pm2 = new JPopupMenu("Options");
+        JPanel pm2p1 = new JPanel();
+        JPanel displayIcon = new JPanel();
+        displayIcon.setPreferredSize(new Dimension(100,100));
+        pm2p1.setPreferredSize(new Dimension(300,300));
+        pm2p1.setLayout(springLayout);
+        pm2.add(displayIcon);
+        pm2.add(pm2p1);
+
+
+        //creates an organized springlayout in panel
+        String[] ls= {"Username: ", "Real Name: ", "Location: ", "Icon: "};
+
+        for (int i=0;i<4;i++) {
+            JLabel l1 = new JLabel(ls[i], JLabel.TRAILING);
+            pm2p1.add(l1);
+            JTextField tf = new JTextField(10);
+            if(i==0){
+                //do not allow user to edit username
+                tf.setText(user1.username);
+                tf.setEditable(false);
+            }
+            else if(i==1){
+                tf.setText(user1.realName);
+            }
+            else if(i==2){
+                tf.setText(user1.location);
+            }
+            else if(i==3){
+                tf.setText(user1.icon);
+            }
+            l1.setLabelFor(tf);
+            pm2p1.add(tf);
+        }
+
+        SpringUtilities.makeCompactGrid(pm2p1, 4, 2, 6, 6, 6, 6);
 
         //setting fonts
         entry.setFont(Arial);
@@ -134,14 +207,28 @@ public class Main {
         i4.setFont(Arial);
         i5.setFont(Arial);
 
-
         //when b1 is clicked, sends a message if number of characters doesnt go over the limit (150). if it does, turns
         //the text area red for a second to warn the user.
-        //FIXME: whatever the hell is going on here
         b1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    received = Message.sendMessage(user1, entry.getText());
+                received = Message.sendMessage(user1, entry.getText());
+            }
+        });
+
+        i2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            Popups.openAbout(mainFrame);
+            }
+        });
+
+
+
+        i3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pm2.show(mainFrame, 100, 100);
             }
         });
 
