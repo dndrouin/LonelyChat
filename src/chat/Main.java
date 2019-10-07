@@ -22,10 +22,9 @@ import javafx.scene.image.*;
 import javafx.stage.Stage;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.SpringLayout;
 import java.util.concurrent.TimeUnit;
@@ -146,11 +145,18 @@ public class Main {
 
         //settings window
         SpringLayout springLayout = new SpringLayout();
-        System.out.println((new File("src\\chat\\icons\\default.jpg")).exists());
-        javaxt.io.Image icon = new javaxt.io.Image(new File("src\\chat\\icons\\default.jpg"));
+        System.out.println("Ok, here i go!");
+        ClassLoader cl = Main.class.getClassLoader();
+        cl = cl.getParent();
+        cl = cl.getParent();
 
-        icon.resize(150,150);
-        icon.saveAs(new File("src\\chat\\icons\\current\\150.jpg"));
+        URL url = cl.getResource("icons/default.jpg");
+        System.out.println(url.getPath());
+            javaxt.io.Image test = new javaxt.io.Image(url.getPath());
+
+        System.out.println("I did it!");
+       // icon.resize(150,150);
+      //  icon.saveAs(new File("src\\chat\\icons\\current\\150.jpg"));
         Image settingsIcon = new Image("src\\chat\\icons\\current\\150.jpg");
 
         JPanel displayIcon = new JPanel();
