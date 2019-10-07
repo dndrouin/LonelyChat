@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="javaxt-core">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/.idea/libraries/javaxt-core.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

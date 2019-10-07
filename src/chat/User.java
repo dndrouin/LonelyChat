@@ -20,7 +20,7 @@ public class User {
     User(String enteredUsername){
         username = enteredUsername;
         realName = "Unknown";
-        icon = "default.jpg";
+        icon = "src\\chat\\icons\\default.jpg";
         location = "Unknown";
     }
 

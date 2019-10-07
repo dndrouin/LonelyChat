@@ -4,7 +4,11 @@
 
 package chat;
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
@@ -15,6 +19,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javafx.scene.image.*;
+import javafx.stage.Stage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -139,32 +144,40 @@ public class Main {
         p2.add(countDisplay, BorderLayout.SOUTH);
 
 
-        //options window
+        //settings window
         SpringLayout springLayout = new SpringLayout();
-     //FIXME: iconImg gives immediate error
-        //creating circle icon to be displayed
-        Circle icon = new Circle(100,100,100);
-        BufferedImage iconImgB = null;
-        javafx.scene.image.Image iconImg;
+        System.out.println((new File("src\\chat\\icons\\default.jpg")).exists());
+        javaxt.io.Image icon = new javaxt.io.Image(new File("src\\chat\\icons\\default.jpg"));
 
-        try {
-            iconImgB = ImageIO.read(new File("chat/icons/default.jpg"));
+        icon.resize(150,150);
+        icon.saveAs(new File("src\\chat\\icons\\current\\150.jpg"));
+        Image settingsIcon = new Image("src\\chat\\icons\\current\\150.jpg");
 
-        } catch (IOException e) {
-            System.out.println("Could not load default icon image!");
-        }
+        JPanel displayIcon = new JPanel();
+        displayIcon.setPreferredSize(new Dimension(200,200));
 
-        iconImg = SwingFXUtils.toFXImage(iconImgB, null);
 
-        //filling circle with icon image
-        icon.setFill(new ImagePattern(iconImg));
+        //setScene cannot be called on this thread so do runlater so it doesn't freeze everything
+        Platform.runLater(() -> {
+            //putting the icon image inside a circle because it looks cooler that way
+            Circle iconCircle = new Circle(100,100,100, new ImagePattern(settingsIcon));
+            //using jfxpanel to use swing and javafx at the same time
+            JFXPanel jfxIcon = new JFXPanel();
+            jfxIcon.setPreferredSize(new Dimension(200,200));
+            Scene iconScene = new Scene(new Group(iconCircle));
+            //makes background around the circle transparent
+            iconScene.setFill(new javafx.scene.paint.Color(0,0,0,0));
+            jfxIcon.setScene(iconScene);
+            displayIcon.add(jfxIcon);
+        });
+
 
         JPopupMenu pm2 = new JPopupMenu("Options");
         JPanel pm2p1 = new JPanel();
-        JPanel displayIcon = new JPanel();
-        displayIcon.setPreferredSize(new Dimension(100,100));
-        pm2p1.setPreferredSize(new Dimension(300,300));
+
+        pm2p1.setPreferredSize(new Dimension(300,150));
         pm2p1.setLayout(springLayout);
+
         pm2.add(displayIcon);
         pm2.add(pm2p1);
 
@@ -216,13 +229,13 @@ public class Main {
             }
         });
 
+        //when i2 is clicked, open the "about" popup
         i2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             Popups.openAbout(mainFrame);
             }
         });
-
 
 
         i3.addActionListener(new ActionListener() {
