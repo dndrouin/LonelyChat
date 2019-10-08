@@ -145,19 +145,18 @@ public class Main {
 
         //settings window
         SpringLayout springLayout = new SpringLayout();
-        System.out.println("Ok, here i go!");
+
         ClassLoader cl = Main.class.getClassLoader();
         cl = cl.getParent();
         cl = cl.getParent();
-
+//FIXME: can't locate files
         URL url = cl.getResource("icons/default.jpg");
         System.out.println(url.getPath());
             javaxt.io.Image test = new javaxt.io.Image(url.getPath());
 
-        System.out.println("I did it!");
        // icon.resize(150,150);
       //  icon.saveAs(new File("src\\chat\\icons\\current\\150.jpg"));
-        Image settingsIcon = new Image("src\\chat\\icons\\current\\150.jpg");
+       // Image settingsIcon = new Image("src\\chat\\icons\\current\\150.jpg");
 
         JPanel displayIcon = new JPanel();
         displayIcon.setPreferredSize(new Dimension(200,200));
