@@ -58,6 +58,8 @@ public class Main {
         AtomicBoolean newMsg = new AtomicBoolean(false);
         int prevID = 0; //track previous message's ID to know if a new message was sent
         int subtract = 0;
+        //this all the way up here to prevent graphics initialization error
+        JFXPanel jfxIcon = new JFXPanel();
 
         //panels
         JPanel p1 = new JPanel();
@@ -143,32 +145,33 @@ public class Main {
         p2.add(countDisplay, BorderLayout.SOUTH);
 
 
+        //TODO: Move this into popups class
         //settings window
         SpringLayout springLayout = new SpringLayout();
-
         ClassLoader cl = Main.class.getClassLoader();
-        cl = cl.getParent();
-        cl = cl.getParent();
-//FIXME: can't locate files
-        URL url = cl.getResource("icons/default.jpg");
-        System.out.println(url.getPath());
-            javaxt.io.Image test = new javaxt.io.Image(url.getPath());
-
-       // icon.resize(150,150);
-      //  icon.saveAs(new File("src\\chat\\icons\\current\\150.jpg"));
-       // Image settingsIcon = new Image("src\\chat\\icons\\current\\150.jpg");
+        URI uri1 = null;
+        try {
+            uri1 = cl.getResource("icons/default.jpg").toURI();
+        } catch (URISyntaxException e) {
+            System.out.println("Default icon could not be located.");
+        }
+        System.out.println(uri1.getPath());
+            javaxt.io.Image icon = new javaxt.io.Image(uri1.getPath());
+         icon.resize(150,150);
+        icon.saveAs(new File("icons/current/150.jpg"));
+        Image settingsIcon = new Image("icons/current/150.jpg");
 
         JPanel displayIcon = new JPanel();
-        displayIcon.setPreferredSize(new Dimension(200,200));
+        displayIcon.setPreferredSize(new Dimension(150,160));
 
 
         //setScene cannot be called on this thread so do runlater so it doesn't freeze everything
         Platform.runLater(() -> {
             //putting the icon image inside a circle because it looks cooler that way
-            Circle iconCircle = new Circle(100,100,100, new ImagePattern(settingsIcon));
+            Circle iconCircle = new Circle(75,75,75, new ImagePattern(settingsIcon));
             //using jfxpanel to use swing and javafx at the same time
-            JFXPanel jfxIcon = new JFXPanel();
             jfxIcon.setPreferredSize(new Dimension(200,200));
+            jfxIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
             Scene iconScene = new Scene(new Group(iconCircle));
             //makes background around the circle transparent
             iconScene.setFill(new javafx.scene.paint.Color(0,0,0,0));
@@ -183,6 +186,8 @@ public class Main {
         pm2p1.setPreferredSize(new Dimension(300,150));
         pm2p1.setLayout(springLayout);
 
+        //TODO: center things so they don't look so sloppy
+        pm2.setPreferredSize(new Dimension(250,350));
         pm2.add(displayIcon);
         pm2.add(pm2p1);
 
@@ -212,7 +217,9 @@ public class Main {
             pm2p1.add(tf);
         }
 
-        SpringUtilities.makeCompactGrid(pm2p1, 4, 2, 6, 6, 6, 6);
+        SpringUtilities.makeCompactGrid(pm2p1, 4, 2, 6, 20, 6, 6);
+
+        JButton b2 = new JButton("Save Changes");
 
         //setting fonts
         entry.setFont(Arial);
@@ -231,6 +238,13 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
                 received = Message.sendMessage(user1, entry.getText());
+            }
+        });
+
+        b2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: press save in settings and it saves the things to your profile
             }
         });
 
