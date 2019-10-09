@@ -1,7 +1,7 @@
 # LonelyChat
 Have you ever thought to yourself, "Man, I really wish I could talk to someone right now, but actually, not really"? Boy, do I have the solution for you! Enter **LonelyChat**, the chat client for people that just want to talk to themselves. It's all the fun of talking to someone else but with none of that whole pesky "talking to someone else" part. 
 
-<center>Please note that it is a **work in progress**.  </center>
+Please note that it is a **work in progress**.  
 
 ## About
 **LonelyChat** is *currently* a one-man chat client without any connectivity capabilities, like *Notepad* but with a lot of extra steps. The end goal is for it to be a chatroom-like environment where multiple users can connect to and send messages to each other. Users have an identifying icon next to every message they send, which, when clicked, will show other users their saved profile information. Nothing revolutionary by any means, but it brings together a lot of things I haven't played with much in Java so it's really good practice for me.
