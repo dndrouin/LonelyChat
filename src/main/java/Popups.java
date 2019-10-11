@@ -27,9 +27,9 @@ public class Popups {
         pm1.setPreferredSize(new Dimension(150,100));
 
         //setting fonts
-        pm1p1b1.setFont(Main.Arial);
-        pm1p1j1.setFont(Main.ArialBold);
-        pm1p1b1.setFont(Main.Arial);
+        pm1p1b1.setFont(Window.Arial);
+        pm1p1j1.setFont(Window.ArialBold);
+        pm1p1b1.setFont(Window.Arial);
         pm1p1.setLayout(new BoxLayout(pm1p1,BoxLayout.Y_AXIS));
 
         //assembling it all
@@ -41,7 +41,8 @@ public class Popups {
         pm1.pack();
 
         //shows the popup window
-        pm1.show(window, 100, 100);
+        //pm1.show(window, 100, 100);
+        pm1.setVisible(true);
 
         //when "My Website" button is pressed, open browser and go to my website's url
         pm1p1b1.addActionListener(new ActionListener() {
@@ -66,8 +67,6 @@ public class Popups {
         //panel container for icon in settings
         JPanel displayIcon = new JPanel();
         displayIcon.setPreferredSize(new Dimension(150,160));
-        //image objects to hold the 150x150 and 50x50 versions of the icon
-        Main.updateIcon(user1);
 
         JPopupMenu pm2 = new JPopupMenu("Options");
         JPanel pm2p1 = new JPanel();
@@ -150,7 +149,7 @@ public class Popups {
                     user1.icon = "/icon/road.jpg";
                 }
                 //updates the icon itself
-                Main.updateIcon(user1);
+                user1.uicon.updateIcon();
             }
         });
 

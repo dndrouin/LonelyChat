@@ -32,7 +32,7 @@ public class customizedPanel extends JPanel {
         //assemble sender jlabel which states who sent the message
         JLabel sender = new JLabel(" " + username);
         sender.setForeground(Color.decode("#00aaff"));
-        sender.setFont(Main.ArialBold);
+        sender.setFont(Window.ArialBold);
 
         //assemble txt jtextarea which contains actual message content
         JTextArea txt = new JTextArea(text);
@@ -40,7 +40,7 @@ public class customizedPanel extends JPanel {
         txt.setLineWrap(true);
         txt.setWrapStyleWord(true);
         txt.setBackground(null);
-        txt.setFont(Main.Arial);
+        txt.setFont(Window.Arial);
 
         //setting up customizedPanel jPanel
         customizedPanel.super.setPreferredSize(size);
