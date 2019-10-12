@@ -2,6 +2,9 @@
 // (c) danielle drouin 2019 - github.com/dndrouin
 //
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
@@ -19,12 +22,14 @@ public class Main {
     public static void main(String[] args) {
         //start message ID at zero when program starts
         Message.id = 0;
+        //create new JFXPanel to avoid "Toolkit not initialized" exception
+        JFXPanel temp = new JFXPanel();
         //first opens login window to receive username from user
          String username = loginWindow();
         //create new user object with username received
         User human = new User(username);
         //get settings 150x150 icon and msg 50x50 icon ready for use and saved in resources>icons>current folder
-        human.uicon.updateIcon();
+        Platform.runLater(() ->{human.uicon.updateIcon();});
         //then opens main chat window with their username
         Window mw = new Window(human);
 

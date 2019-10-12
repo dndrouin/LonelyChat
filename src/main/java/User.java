@@ -3,15 +3,19 @@
 //
 
 import javafx.embed.swing.JFXPanel;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 
-import java.awt.image.RenderedImage;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 public class User {
     public String username, realName, icon, location;
@@ -36,12 +40,12 @@ public class User {
 
     public class Icon {
 
-         Image smallImg, largeImg;
+         BufferedImage smallImg, largeImg;
          String smallPath, largePath;
 
          Icon(){
-             smallPath = pathPurifier(Main.cl.getResource("icons/current/50.jpg").toString());
-             largePath = pathPurifier(Main.cl.getResource("icons/current/150.jpg").toString());
+             smallPath = pathPurifier(Main.cl.getResource("icons/current/50.png").toString());
+             largePath = pathPurifier(Main.cl.getResource("icons/current/150.png").toString());
              //do not set smallImg or largeImg until circlefier is ran
          }
 
@@ -55,37 +59,58 @@ public class User {
 
             String selectedPath = pathPurifier(Main.cl.getResource(User.this.icon).toString());
             //create 50x50 and 150x150 versions of image and save them for later use
-            createIcons(selectedPath);
-            circlefier(smallPath, largePath);
+            try {
+                createIcons(selectedPath);
+            } catch (IOException e) {
+                System.out.println("Icon creation unsuccessful.");
+            }
+
+            try {
+                circlefier(smallPath, largePath);
+            } catch (IOException e) {
+                System.out.println("Icon circlefication unsuccessful.");
+            }
+
             System.out.println("Icon update finished.");
         }
 
         //mask the current icons small and large to a circle shape and use it to overwrite the non-circle ones
-        public void circlefier(String smallPath, String largePath){
+        public void circlefier(String smallPath, String largePath) throws IOException {
+            //loads image url as an Image object
+            Image tempImg = new Image("file:/" + largePath);
             //turns the large icon image into a circle and saves it
-            Circle iconCircle = new Circle(75,75,75, new ImagePattern(largeImg));
+            Circle iconCircle = new Circle(75,75,75, new ImagePattern(tempImg));
             //add circle to vbox and then take a snapshot of it
             VBox vb = new VBox();
             vb.getChildren().add(iconCircle);
-            WritableImage snapshot = vb.snapshot(new SnapshotParameters(), null);
-            //cast snapshot to renderedimage which can be turned into a javaxt image and then save it in the same path
-            javaxt.io.Image toBeSaved = new javaxt.io.Image((RenderedImage) snapshot);
+            //make snapshot background transparent
+            SnapshotParameters sp = new SnapshotParameters();
+            sp.setFill(Color.TRANSPARENT);
+            WritableImage snapshot = vb.snapshot(sp, null);
+            //turn snapshot into a javaxt image and then save it in the same path
+            javaxt.io.Image toBeSaved = new javaxt.io.Image(SwingFXUtils.fromFXImage(snapshot, null));
             toBeSaved.saveAs(largePath);
 
             //repeat for small icon image
-            iconCircle = new Circle(25,25,25, new ImagePattern(smallImg));
+            tempImg = new Image("file:/" + smallPath);
+            iconCircle = new Circle(25,25,25, new ImagePattern(tempImg));
             //add circle to vbox and then take a snapshot of it
             //empty the vbox first this time
             vb.getChildren().clear();
             vb.getChildren().add(iconCircle);
-            snapshot = vb.snapshot(new SnapshotParameters(), null);
-            //cast snapshot to renderedimage which can be turned into a javaxt image and then save it in the same path
-            toBeSaved = new javaxt.io.Image((RenderedImage) snapshot);
+            snapshot = vb.snapshot(sp, null);
+            //turn snapshot into a javaxt image and then save it in the same path
+            toBeSaved = new javaxt.io.Image(SwingFXUtils.fromFXImage(snapshot, null));
             toBeSaved.saveAs(smallPath);
 
+
             //set smallimg and largeimg to be new circlefied images
-            smallImg = new Image("file:/" + smallPath);
-            largeImg = new Image("file:/" + largePath);
+            //first create a file and then read it into an image
+            File tempF = new File("file:/" + smallPath);
+            smallImg = ImageIO.read(tempF);
+
+            tempF = new File("file:/" + largePath);
+            smallImg = ImageIO.read(tempF);
 
             System.out.println("Circlefied icons successfully!");
         }
@@ -101,7 +126,7 @@ public class User {
         }
 
         //creates the small and large versions of the icon files for use later in the program
-        public void createIcons(String p){
+        public void createIcons(String p) throws IOException {
             //load user provided path as a javaxt image, which can resize and save more easily than other image types
             javaxt.io.Image icon = new javaxt.io.Image(p);
 
@@ -115,9 +140,11 @@ public class User {
             icon.resize(50,50);
             icon.saveAs(new File(smallPath));
 
-            //now create images to hold the files at the paths so circlefier can use them
-            smallImg = new Image("file:/" + smallPath);
-            largeImg = new Image("file:/" + largePath);
+            File tempF = new File("file:/" + smallPath);
+            smallImg = ImageIO.read(tempF);
+
+            tempF = new File("file:/" + largePath);
+            smallImg = ImageIO.read(tempF);
 
             System.out.println("Created new icons successfully!");
         }

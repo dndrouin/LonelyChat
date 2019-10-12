@@ -41,7 +41,7 @@ public class Popups {
         pm1.pack();
 
         //shows the popup window
-        //pm1.show(window, 100, 100);
+        pm1.show(window, 100, 100);
         pm1.setVisible(true);
 
         //when "My Website" button is pressed, open browser and go to my website's url
@@ -63,10 +63,12 @@ public class Popups {
         //settings window
         SpringLayout springLayout = new SpringLayout();
 
-        //beginning setup of icons
-        //panel container for icon in settings
-        JPanel displayIcon = new JPanel();
-        displayIcon.setPreferredSize(new Dimension(150,160));
+        //place user icon in imageicon and then jlabel to be displayed on settings popup
+        JLabel iconLabel = new JLabel();
+        ImageIcon displayIcon = new ImageIcon();
+        displayIcon.setImage(user1.uicon.largeImg);
+        iconLabel.setIcon(displayIcon);
+
 
         JPopupMenu pm2 = new JPopupMenu("Options");
         JPanel pm2p1 = new JPanel();
@@ -76,7 +78,7 @@ public class Popups {
 
         //TODO: center things so they don't look so sloppy
         pm2.setPreferredSize(new Dimension(250,350));
-        pm2.add(displayIcon);
+        pm2.add(iconLabel);
         pm2.add(pm2p1);
         pm2.setVisible(true);
 

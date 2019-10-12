@@ -31,12 +31,18 @@ public class Window {
         mainFrame = new JFrame();
         entry = new JTextArea();
         currentUser = new User();
+        panels = new Vector<JPanel>();
+        buttons = new Vector<JButton>();
+        menuItems = new Vector<JMenuItem>();
     }
 
     Window(User u){
         entry = new JTextArea();
         currentUser = u;
         mainFrame = new JFrame("LonelyChat - " + u.username);
+        panels = new Vector<JPanel>();
+        buttons = new Vector<JButton>();
+        menuItems = new Vector<JMenuItem>();
     }
 
     public void loggedIn(){
@@ -57,7 +63,7 @@ public class Window {
         //fill menuitem vector with needed number of menuitems
         //array to hold labels for menuitems
         String[] labels = {"Options", "About", "Settings", "Log Out", "Exit Program"};
-        for(int i=0;i<3;i++) {
+        for(int i=0;i<5;i++) {
             menuItems.add(new JMenuItem());
             menuItems.get(i).setText(labels[i]);
         }
@@ -89,7 +95,7 @@ public class Window {
         //resizing components
         panels.get(0).setPreferredSize(new Dimension(500, 700));
         panels.get(1).setMaximumSize(new Dimension(500, 150));
-        buttons.get(1).setPreferredSize(new Dimension(100, 100));
+        buttons.get(0).setPreferredSize(new Dimension(100, 100));
         mainFrame.add(panels.get(0));
         entry.setPreferredSize(new Dimension(340, 100));
         panels.get(0).setLayout(new BoxLayout(panels.get(0), BoxLayout.Y_AXIS));
@@ -139,6 +145,32 @@ public class Window {
         menuItems.get(4).setFont(Arial);
 
 
+        //when b1 is clicked, sends a message if number of characters doesnt go over the limit (150). if it does, turns
+        //the text area red for a second to warn the user.
+        buttons.get(0).addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.received = Message.sendMessage(currentUser, entry.getText());
+            }
+        });
+
+        //when i2 is clicked, open the "about" popup
+        menuItems.get(1).addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Popups.openAbout(mainFrame);
+            }
+        });
+
+        //when i3 is clicked, open the "settings" popup
+        menuItems.get(2).addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Popups.openSettings(currentUser);
+
+            }
+        });
+
         while (keepRefreshing) {
             //continuously update the letter count for entry
             count = (entry.getText()).length();
@@ -173,30 +205,6 @@ public class Window {
             }
         }
 
-        //when b1 is clicked, sends a message if number of characters doesnt go over the limit (150). if it does, turns
-        //the text area red for a second to warn the user.
-        buttons.get(0).addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Main.received = Message.sendMessage(currentUser, entry.getText());
-            }
-        });
-
-        //when i2 is clicked, open the "about" popup
-        menuItems.get(1).addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Popups.openAbout(mainFrame);
-            }
-        });
-
-        //when i3 is clicked, open the "settings" popup
-        menuItems.get(2).addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Popups.openSettings(currentUser);
-            }
-        });
 
     }
 
