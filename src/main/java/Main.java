@@ -36,28 +36,6 @@ public class Main {
         mw.loggedIn();
     }
 
-        /*entry.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-                //when the user begins entering text in the entry textarea, begin refreshing looking for input
-                refresh();
-            }
-
-            //does nothing but is required when adding a keylistener
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-                refresh();
-            }
-
-            //does nothing but is required when adding a keylistener
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                refresh();
-            }
-
-        });
-   }*/
-
 
     public static String loginWindow() {
 

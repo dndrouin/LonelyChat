@@ -2,6 +2,8 @@
 // (c) danielle drouin 2019 - github.com/dndrouin
 //
 
+import javafx.application.Platform;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -59,15 +61,15 @@ public class Popups {
 
 
     public static void openSettings(User user1){
+        //if true, keep while looping to detect icon change
+        boolean windowOpen = true;
 
         //settings window
         SpringLayout springLayout = new SpringLayout();
 
         //place user icon in imageicon and then jlabel to be displayed on settings popup
         JLabel iconLabel = new JLabel();
-        ImageIcon displayIcon = new ImageIcon();
-        displayIcon.setImage(user1.uicon.largeImg);
-        iconLabel.setIcon(displayIcon);
+        iconLabel.setIcon(new ImageIcon(user1.uicon.largeImg));
 
 
         JPopupMenu pm2 = new JPopupMenu("Options");
@@ -113,18 +115,29 @@ public class Popups {
                 pm2p1.add(tf2);
             }
             else if(i==3) {
-                //FIXME: popup disappears if you select thing in combobox
                 //place jcombobox with icon image options in it
-                iconList.setSelectedIndex(0);
                 l1.setLabelFor(iconList);
                 pm2p1.add(iconList);
             }
         }
         JPanel pm2p2 = new JPanel();
         JButton b2 = new JButton("Save Changes");
+        JButton b3 = new JButton("Exit Window");
         pm2p2.add(b2);
+        pm2p2.add(b3);
         pm2.add(pm2p2);
         SpringUtilities.makeCompactGrid(pm2p1, 4, 2, 6, 20, 6, 6);
+
+        Thread refreshIcon = new Thread(){
+            public void run() {
+                while (windowOpen) {
+                    iconLabel.setIcon(new ImageIcon(user1.uicon.largeImg));
+                }
+            }
+        };
+        refreshIcon.start();
+
+
 
         b2.addActionListener(new ActionListener() {
             @Override
@@ -136,24 +149,36 @@ public class Popups {
                 //changes user's icon url based on what index was chosen in the iconlist
                 if(iconList.getSelectedIndex() == 0) {
                     //default icon chosen
-                    user1.icon = "/icon/default.jpg";
+                    user1.icon = "icons/default.jpg";
                 }
                 else if(iconList.getSelectedIndex() == 1){
                     //cat icon chosen
-                    user1.icon = "/icon/cat.jpg";
+                    user1.icon = "icons/cat.jpg";
                 }
                 else if(iconList.getSelectedIndex() == 2){
                     //flowers icon chosen
-                    user1.icon = "/icon/flowers.jpg";
+                    user1.icon = "icons/flowers.jpg";
                 }
                 else if(iconList.getSelectedIndex() == 3){
                     //road icon chosen
-                    user1.icon = "/icon/road.jpg";
+                    user1.icon = "icons/road.jpg";
                 }
                 //updates the icon itself
-                user1.uicon.updateIcon();
+                Platform.runLater(() ->{user1.uicon.updateIcon();});
+
+                //refresh the image to show the new one
+                iconLabel.setIcon(new ImageIcon(user1.uicon.largeImg));
             }
         });
+
+        b3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //when user presses "Exit Window" button, exit the popup window
+            pm2.setVisible(false);
+            }
+        });
+
 
     }
 

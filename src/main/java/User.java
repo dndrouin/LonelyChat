@@ -12,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +69,6 @@ public class User {
             } catch (IOException e) {
                 System.out.println("Icon circlefication unsuccessful.");
             }
-
             System.out.println("Icon update finished.");
         }
 
@@ -90,6 +88,8 @@ public class User {
             //turn snapshot into a javaxt image and then save it in the same path
             javaxt.io.Image toBeSaved = new javaxt.io.Image(SwingFXUtils.fromFXImage(snapshot, null));
             toBeSaved.saveAs(largePath);
+            //set largeImg to toBeSaved's image
+            largeImg = toBeSaved.getBufferedImage();
 
             //repeat for small icon image
             tempImg = new Image("file:/" + smallPath);
@@ -102,15 +102,8 @@ public class User {
             //turn snapshot into a javaxt image and then save it in the same path
             toBeSaved = new javaxt.io.Image(SwingFXUtils.fromFXImage(snapshot, null));
             toBeSaved.saveAs(smallPath);
-
-
-            //set smallimg and largeimg to be new circlefied images
-            //first create a file and then read it into an image
-            File tempF = new File("file:/" + smallPath);
-            smallImg = ImageIO.read(tempF);
-
-            tempF = new File("file:/" + largePath);
-            smallImg = ImageIO.read(tempF);
+            //set smallImg to toBeSaved's image
+            smallImg = toBeSaved.getBufferedImage();
 
             System.out.println("Circlefied icons successfully!");
         }
@@ -135,16 +128,9 @@ public class User {
             //resize image to 150x150 and save it at largePath
             icon.resize(150,150);
             icon.saveAs(new File(largePath));
-
             //resize image to 50x50 and save it at smallPath
             icon.resize(50,50);
             icon.saveAs(new File(smallPath));
-
-            File tempF = new File("file:/" + smallPath);
-            smallImg = ImageIO.read(tempF);
-
-            tempF = new File("file:/" + largePath);
-            smallImg = ImageIO.read(tempF);
 
             System.out.println("Created new icons successfully!");
         }
