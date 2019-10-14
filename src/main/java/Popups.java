@@ -60,7 +60,7 @@ public class Popups {
     }
 
 
-    public static void openSettings(User user1){
+    public static void openSettings(User user1, JFrame window){
         //if true, keep while looping to detect icon change
         boolean windowOpen = true;
 
@@ -82,7 +82,6 @@ public class Popups {
         pm2.setPreferredSize(new Dimension(250,350));
         pm2.add(iconLabel);
         pm2.add(pm2p1);
-        pm2.setVisible(true);
 
         //creates an organized springlayout in panel
         String[] ls = {"Username: ", "Real Name: ", "Location: ", "Icon: "};
@@ -115,6 +114,7 @@ public class Popups {
                 pm2p1.add(tf2);
             }
             else if(i==3) {
+                //FIXME: popup window disappears when combobox item selected
                 //place jcombobox with icon image options in it
                 l1.setLabelFor(iconList);
                 pm2p1.add(iconList);
@@ -128,6 +128,8 @@ public class Popups {
         pm2.add(pm2p2);
         SpringUtilities.makeCompactGrid(pm2p1, 4, 2, 6, 20, 6, 6);
 
+
+        //create a new thread dedicated to refreshing the icon repeatedly so it will show updated icon to user when it is changed
         Thread refreshIcon = new Thread(){
             public void run() {
                 while (windowOpen) {
@@ -137,6 +139,9 @@ public class Popups {
         };
         refreshIcon.start();
 
+
+        pm2.show(window, 100, 100);
+        pm2.setVisible(true);
 
 
         b2.addActionListener(new ActionListener() {
@@ -175,7 +180,7 @@ public class Popups {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //when user presses "Exit Window" button, exit the popup window
-            pm2.setVisible(false);
+                pm2.setVisible(false);
             }
         });
 

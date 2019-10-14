@@ -7,13 +7,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 public class Window {
 
-    //TODO: put login window ♦in here as well
+    //TODO: put login window in here as well
 
     //defining these so the class can open both login windows and main windows
     public static final int LOGIN = 0, MAIN = 1;
+
+    //the newest message's object
+    private static Message received;
 
     //fonts
     static Font Arial = new Font("Arial", Font.PLAIN, 11);
@@ -69,7 +73,7 @@ public class Window {
         }
 
         //only need one button for now so just do that
-        buttons.add(new JButton("Save"));
+        buttons.add(new JButton("Send"));
 
         //main window
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -120,8 +124,6 @@ public class Window {
         scrollText.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         panels.get(2).setLayout(new BoxLayout(panels.get(2), BoxLayout.Y_AXIS));
 
-        //make window visible to user
-        mainFrame.setVisible(true);
 
         //placeholder setup
         panels.get(3).setPreferredSize(panels.get(2).getSize());
@@ -144,13 +146,33 @@ public class Window {
         menuItems.get(3).setFont(Arial);
         menuItems.get(4).setFont(Arial);
 
+        //make window visible to user
+        mainFrame.setVisible(true);
+
+        //disable sending messages for 5 seconds while everything loads in the window
+        boolean loading = true;
+        while(loading){
+            entry.setText("Loading...");
+            entry.setEditable(false);
+            buttons.get(0).setEnabled(false);
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                //working as intended
+            }
+            entry.setText("");
+            entry.setEditable(true);
+            buttons.get(0).setEnabled(true);
+            loading=false;
+        }
+
 
         //when b1 is clicked, sends a message if number of characters doesnt go over the limit (150). if it does, turns
         //the text area red for a second to warn the user.
         buttons.get(0).addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.received = Message.sendMessage(currentUser, entry.getText());
+                received = Message.sendMessage(currentUser, entry.getText());
             }
         });
 
@@ -166,13 +188,14 @@ public class Window {
         menuItems.get(2).addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Popups.openSettings(currentUser);
+                Popups.openSettings(currentUser, mainFrame);
 
             }
         });
 
         while (keepRefreshing) {
             //continuously update the letter count for entry
+            //FIXME: count sometimes gives nullpointerexception??
             count = (entry.getText()).length();
             countDisplay.setText(count + "/150");
             //if user enters over 150 characters, disable the button so they can't send the message and turn letter count red as warning
@@ -193,6 +216,13 @@ public class Window {
                 newMsg = true;
             }
             if (newMsg) {
+                //fixes timing issue regarding this block of code trying to run displayNewMsg() before
+                //the new message has even been fully created, makes thread wait half a second before running code
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    //working as intended
+                }
                 //wipe the textarea after a message is sent
                 entry.setText("");
                 System.out.println("New message detected!");
@@ -210,7 +240,7 @@ public class Window {
 
     public void displayNewMsg(){
         //create a customizedPanel with message text and add it to the message display area
-        panels.get(2).add(new customizedPanel(new Dimension(500,60), new BorderLayout(), Main.received.text, Main.received.sender.username));
+        panels.get(2).add(new customizedPanel(new Dimension(500,60), new BorderLayout(), received.text, received.sender.username));
         //recalculate subtract, which subtracts p3's placeholder's size by the height of the latest message to make room for new message
         int subtract = panels.get(2).getComponent(panels.get(2).getComponentCount() - 1).getSize().height;
         panels.get(3).setPreferredSize(new Dimension(panels.get(2).getWidth(), panels.get(2).getSize().height - subtract));

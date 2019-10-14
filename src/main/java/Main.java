@@ -15,8 +15,6 @@ public class Main {
 
     //classloader to make resource access easier
     static  ClassLoader cl = Main.class.getClassLoader();
-    //the newest message's object
-    static Message received;
 
     //main method
     public static void main(String[] args) {
